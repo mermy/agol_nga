@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Legend with Checkboxes</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.21/esri/css/main.css">
+  <style>
+    html, body, #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+    #sidebar {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 300px;
+      background: white;
+      padding: 10px;
+      z-index: 10;
+    }
+  </style>
+  <script src="https://js.arcgis.com/4.21/"></script>
+  <script>
+    require([
+      "esri/WebMap",
+     ",
+      "esri/widgets/Legend",
+      "dojo/domReady!"
+    ], function(WebMap, MapView, Legend) {
+      var webmap = new WebMap({
+        portalItem: {
+          id: "267fd481225442729b86f34b11ed3dc5"
+        }
+      });
+
+      var view = new MapView({
+        container: "viewDiv",
+        map: webmap
+      });
+
+      view.when(function() {
+        var legend = new Legend({
+          view: view,
+          container: "legendDiv"
+        });
+
+        // Add checkboxes
+        legend.layerInfos.forEach(function(layerInfo) {
+          var checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = layerInfo.layer.visible;
+          checkbox.onchange = function() {
+            layerInfo.layer.visible = this.checked;
+          };
+          var label = document.createElement("label");
+          label.appendChild(checkbox);
+          label.appendChild(document.createTextNode(layerInfo.title));
+          document.getElementById("legendDiv").appendChild(label);
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+  <div id="viewDiv"></div>
+  <div id="sidebar">
+    <div id="legendDiv"></div>
+  </div>
+</body>
+</html>
